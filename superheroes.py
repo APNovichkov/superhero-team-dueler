@@ -5,6 +5,31 @@ class Team:
         self.name = name
         self.heroes = []
 
+    def attack(self, other_team):
+        if len(self.heroes) == 0 or len(other_team.heroes) == 0:
+            print("Not enough players on a team. Its a draw!")
+            return
+
+        while True:
+            team1_random_hero = self.get_random_living_hero(self)
+            team2_random_hero = self.get_random_living_hero(other_team)
+
+            if team1_random_hero is None or team2_random_hero is None:
+                break
+
+            team1_random_hero.fight(team2_random_hero)
+
+        if team1_random_hero is None:
+            print("Team {} wins! ".format(other_team.name))
+        else:
+            print("Team {} wins! ".format(self.name))
+
+    def revive_heroes(self, health=100):
+        print("")
+
+    def stats(self):
+        print("")
+
     def add_hero(self, hero):
         self.heroes.append(hero)
 
@@ -22,6 +47,26 @@ class Team:
         index = 1
         for hero in self.heroes:
             print("Hero {}: {}".format(index, hero.name))
+
+    # Helper functions
+    def get_random_living_hero(self, team):
+        living_heroes = []
+        for hero in team.heroes:
+            if hero.is_alive:
+                living_heroes.append(hero)
+
+        if len(living_heroes) != 0:
+            return living_heroes[random.randint(0, len(living_heroes) - 1)]
+        else:
+            return None
+
+    def get_num_living_heroes(self, team):
+        num_of_living_heroes = 0
+        for hero in team.heroes:
+            if hero.is_alive:
+                num_of_living_heroes += 1
+
+        return num_of_living_heroes
 
 class Ability:
     def __init__(self, name, max_damage):
@@ -55,9 +100,11 @@ class Hero:
         self.deaths = 0
         self.kills = 0
 
-    def add_kill():
-        self.kills += 1
+    def add_kills(self, num_kills):
+        self.kills += num_kills
 
+    def add_deaths(self, num_deaths):
+        self.deaths += num_deaths
 
     def add_ability(self, ability):
         self.abilities.append(ability)
@@ -97,11 +144,17 @@ class Hero:
             # print("{} health: {}".format(self.name, self.current_health))
             # print("{} health: {}".format(opponent.name, opponent.current_health))
             if not opponent.is_alive():
+                self.add_kills(1)
+                opponent.add_deaths(1)
+                opponent.is_alive = False
                 return -1
             self.take_damage(opponent.attack())
             # print("{} health: {}".format(self.name, self.current_health))
             # print("{} health: {}".format(opponent.name, opponent.current_health))
             if not self.is_alive():
+                self.add_deaths(1)
+                self.is_alive = False
+                opponent.add_kills(1)
                 return 1
 
     def set_current_health(self, value):
@@ -119,23 +172,31 @@ if __name__ == "__main__":
 
     hero1 = Hero("Andrey", 200)
     hero2 = Hero("Jon", 200)
+    hero3 = Hero("Youseff", 200)
 
     hero1.add_ability(ability1)
     hero1.add_ability(ability2)
     hero2.add_ability(ability3)
     hero2.add_ability(ability4)
+    hero3.add_ability(ability1)
 
-    game_result = hero1.fight(hero2)
+    # game_result = hero1.fight(hero2)
+    #
+    # if game_result == -1:
+    #     print("{} won!".format(hero1.name))
+    # elif game_result == 1:
+    #     print("{} won!".format(hero2.name))
+    # else:
+    #     print("It was a tie!")
 
-    if game_result == -1:
-        print("{} won!".format(hero1.name))
-    elif game_result == 1:
-        print("{} won!".format(hero2.name))
-    else:
-        print("It was a tie!")
+    team1 = Team("One")
+    team1.add_hero(hero1)
+    team1.add_hero(hero3)
 
-    team = Team("One")
-    team.add_hero(hero1)
-    team.add_hero(hero2)
+    team2 = Team("Two")
+    team2.add_hero(hero2)
 
-    team.view_all_heroes()
+    team1.view_all_heroes()
+    team2.view_all_heroes()
+
+    team1.attack(team2)

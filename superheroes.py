@@ -25,10 +25,18 @@ class Team:
             print("Team {} wins! ".format(self.name))
 
     def revive_heroes(self, health=100):
-        print("")
+        for hero in self.heroes:
+            hero.current_health = health
 
     def stats(self):
-        print("")
+        print("------------")
+        print("Team {} Stats!!".format(self.name))
+        print("------------")
+        for hero in self.heroes:
+            if(hero.deaths != 0):
+                print("Hero {} has this ratio of kills to deaths: {}".format(hero.name, (hero.kills / hero.deaths)))
+            else:
+                print("Hero {} has this ratio of kills to deaths: {}".format(hero.name, hero.kills * 1.0))
 
     def add_hero(self, hero):
         self.heroes.append(hero)
@@ -200,3 +208,6 @@ if __name__ == "__main__":
     team2.view_all_heroes()
 
     team1.attack(team2)
+
+    team1.stats()
+    team2.stats()

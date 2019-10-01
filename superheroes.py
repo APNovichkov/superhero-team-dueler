@@ -1,10 +1,22 @@
 import random
 
 
+def print_green(input_string):
+    print("\033[92m{}\033[00m" .format(input_string))
+
+
+def print_red(input_string):
+    print("\033[91m{}\033[00m" .format(input_string))
+
+def print_bold(input_string):
+    print("\033[1m{}\033[1m".format(input_string))
+
 class Arena:
     def __init__(self):
         self.team_one = None
         self.team_two = None
+        print_green("\nWelcome to the Arena!")
+        print_green("---------------------------")
 
     def create_ability(self):
         name = input("Enter the name of the ability: ")
@@ -26,45 +38,51 @@ class Arena:
 
         to_add_ability = input("Enter Y/N if you want to add ability: ").lower()
         while to_add_ability == 'y':
-            hero.add_ability(self.create_ability())
+            ability = self.create_ability()
+            hero.add_ability(ability)
+            print_green("Added ability: \"{}\" with max damage of: {}".format(ability.name, ability.max_damage))
             to_add_ability = input("Want to add another ability? Y/N: ").lower()
 
-        print("-----------------------------------")
+        print_red("-----------------------------------")
 
         to_add_weapon = input("Enter Y/N if you want to add weapon: ").lower()
         while to_add_weapon == 'y':
-            hero.add_weapon(self.create_weapon())
+            weapon = self.create_weapon()
+            hero.add_weapon(weapon)
+            print_green("Added weapon: \"{}\" with max damage of: {}".format(weapon.name, weapon.max_damage))
             to_add_weapon = input("Want to add another weapon? Y/N: ").lower()
 
-        print("-----------------------------------")
+        print_red("-----------------------------------")
 
         to_add_armor = input("Enter Y/N if you want to add armor: ").lower()
         while to_add_armor == 'y':
-            hero.add_armor(self.create_armor())
+            armor = self.create_armor()
+            hero.add_armor(armor)
+            print_green("Added armor: \"{}\" with max block strength of: {}".format(armor.name, armor.max_block))
             to_add_armor = input("Want to add more armor? Y/N: ").lower()
 
-        print("-----------------------------------")
+        print_red("-----------------------------------")
 
         return hero
 
     def build_team_one(self):
         team = Team("Team 1")
-        print("You are now building {}!".format(team.name))
-        num_of_heros = input("How many heroes do you want to create for {}? ".format(team.name))
-        print("-----------------------------------")
-        for i in num_of_heros:
-            print("Creating Hero {} for team {}!".format(i, team.name))
+        print_bold("You are now building {}!".format(team.name))
+        num_of_heros = int(input("How many heroes do you want to create for {}? ".format(team.name)))
+        print_red("-----------------------------------")
+        for i in range(num_of_heros):
+            print_green("Creating Hero {} for {}!".format(i+1, team.name))
             team.add_hero(self.create_hero())
 
         self.team_one = team
 
     def build_team_two(self):
         team = Team("Team 2")
-        print("You are now building {}!".format(team.name))
-        num_of_heros = input("How many heroes do you want to create for {}? ".format(team.name))
-        print("-----------------------------------")
-        for i in num_of_heros:
-            print("Creating Hero {} for team {}!".format(i, team.name))
+        print_bold("You are now building {}!".format(team.name))
+        num_of_heros = int(input("How many heroes do you want to create for {}? ".format(team.name)))
+        print_red("-----------------------------------")
+        for i in range(num_of_heros):
+            print_green("Creating Hero {} for team {}!".format(i+1, team.name))
             team.add_hero(self.create_hero())
 
         self.team_two = team
@@ -79,29 +97,29 @@ class Arena:
         team2_kills = 0
         team2_deaths = 0
 
-        print("-----------------------------------")
-        print("Stats for {}!".format(self.team_one.name))
+        print_red("-----------------------------------")
+        print_bold("Stats for {}!".format(self.team_one.name))
         for hero in self.team_one.heroes:
-            print("Hero: {} has {} kills and {} deaths and is {}!".format(hero.name, hero.kills, hero.deaths, hero.is_alive()[1]))
+            print("Hero: \'{}\' has {} kills and {} deaths and is {}!".format(hero.name, hero.kills, hero.deaths, hero.is_alive()[1]))
             team1_kills += hero.kills
             team1_deaths += hero.deaths
 
         if team1_deaths != 0:
             print("Kill/Death ratio for team {} is {}!".format(self.team_two.name, team1_kills / team1_deaths))
         else:
-            print("Kill/Death ratio for team {} is {}!".format(self.team_two.name, team1_kills))
+            print("Kill/Death ratio for team {} is {}!".format(self.team_two.name, team1_kills * 1.0))
 
-        print("-----------------------------------")
-        print("Stats for {}!".format(self.team_two.name))
+        print_red("-----------------------------------")
+        print_bold("Stats for {}!".format(self.team_two.name))
         for hero in self.team_two.heroes:
-            print("Hero: {} has {} kills and {} deaths and is {}!".format(hero.name, hero.kills, hero.deaths, hero.is_alive()[1]))
+            print("Hero: \'{}\' has {} kills and {} deaths and is {}!".format(hero.name, hero.kills, hero.deaths, hero.is_alive()[1]))
             team2_kills += hero.kills
             team2_deaths += hero.deaths
 
         if team2_deaths != 0:
             print("Kill/Death ratio for team {} is {}!".format(self.team_two.name, team2_kills / team2_deaths))
         else:
-            print("Kill/Death ratio for team {} is {}!".format(self.team_two.name, team2_kills))
+            print("Kill/Death ratio for team {} is {}!".format(self.team_two.name, team2_kills * 1.0))
 
 class Team:
     def __init__(self, name):
@@ -123,9 +141,9 @@ class Team:
             team1_random_hero.fight(team2_random_hero)
 
         if team1_random_hero is None:
-            print("Team {} wins! ".format(other_team.name))
+            print_green("{} wins! ".format(other_team.name))
         else:
-            print("Team {} wins! ".format(self.name))
+            print_green("{} wins! ".format(self.name))
 
     def revive_heroes(self, health=100):
         for hero in self.heroes:
